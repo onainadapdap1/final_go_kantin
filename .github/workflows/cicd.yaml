@@ -26,7 +26,7 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build docker image
-        run: docker build -t pegasus09/final_kantin_ta . 
+        run: docker build -t pegasus09/final_kantin_ta:v1 . 
       - name: Push docker image to the docker hub
         run: docker push pegasus09/final_kantin_ta:v1
   deploy:
@@ -38,4 +38,4 @@ jobs:
       - name: Delete old container
         run: docker rm -f final-kantin-ta-v1
       - name: Run docker container
-        run: docker run -d -p 4040:4040 --name final-kantin-ta-v1 pegasus09/final_kantin_ta
+        run: docker run -d -p 4040:4040 --name final-kantin-ta-v1 pegasus09/final_kantin_ta:v1
