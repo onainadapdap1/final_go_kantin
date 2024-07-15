@@ -83,7 +83,7 @@ func main() {
 	// 1
 	api.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "hi sarah!",
+			"message": "hi sarah meilani butar butar!",
 		})
 	})
 	api.GET("/test", func(c *gin.Context) {
