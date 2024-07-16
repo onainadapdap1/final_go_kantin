@@ -13,6 +13,7 @@ type PengumumanService interface {
 	CreatePengumuman(pengumuman models.Pengumuman) (models.Pengumuman, error)
 	GetAllPengumuman() ([]models.Pengumuman, error)
 	UpdatePengumuman(pengumumanID uint, inputData api.UpdatePengumumanInput) (models.Pengumuman, error)
+	DeletePengumumanByID(pengumumanID uint) error
 	// GetPengumumanByID(pengumumanID uint) (models.Pengumuman, error)
 }
 
@@ -86,4 +87,13 @@ func (s *pengumumanService) UpdatePengumuman(pengumumanID uint, inputData api.Up
 	log.Println("error 3 service")
 
 	return updatedPengumuman, nil
+}
+
+func (s *pengumumanService) DeletePengumumanByID(pengumumanID uint) error {
+	err := s.repo.DeletePengumumanByID(pengumumanID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

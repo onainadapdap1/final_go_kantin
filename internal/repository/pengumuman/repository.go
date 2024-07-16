@@ -12,6 +12,7 @@ type PengumumanRepository interface {
 	GetAllPengumuman() ([]models.Pengumuman, error)
 	UpdatePengumuman(pengumuman models.Pengumuman) (models.Pengumuman, error)
 	GetPengumumanByID(pengumumanID uint) (models.Pengumuman, error)
+	DeletePengumumanByID(pengumumanID uint) error
 }
 
 type pengumumanRepository struct {
@@ -58,4 +59,16 @@ func (r *pengumumanRepository) GetPengumumanByID(pengumumanID uint) (models.Peng
 		return pengumuman, err
 	}
 	return pengumuman, nil
+}
+
+func (r *pengumumanRepository) DeletePengumumanByID(pengumumanID uint) error {
+	tx := r.db.Begin()
+
+	if err := tx.Debug().Delete(&models.Pengumuman{}, pengumumanID).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	return nil
 }

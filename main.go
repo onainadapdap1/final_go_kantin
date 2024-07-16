@@ -99,10 +99,12 @@ func main() {
 	api.GET("/pengumuman", middleware.AuthBothMiddleware(authService, userServ), pengumumanHandler.GetAllPengumuman)
 	// new request update
 	api.PUT("/pengumuman/:id", middleware.AuthAdminMiddleware(authService, userServ), pengumumanHandler.UpdatedPengumuman)
+	api.DELETE("/pengumuman/:id", middleware.AuthAdminMiddleware(authService, userServ), pengumumanHandler.DeletePengumumanByID)
 	// 4
 	api.GET("/feedback", middleware.AuthAdminMiddleware(authService, userServ), feedbackHandler.GetAllFeedback)
 	// 5
 	api.POST("/menu-makanans", middleware.AuthAdminMiddleware(authService, userServ), menuMakanHandler.CreateMenuMakanan)
+	api.PUT("/menu-makanans/:id", middleware.AuthAdminMiddleware(authService, userServ), menuMakanHandler.UpdateMenuMakanan)
 	// 10
 	api.GET("/menu-makanans", middleware.AuthAdminMiddleware(authService, userServ), menuMakanHandler.GetAllMenuMakanan)
 	// new request delete

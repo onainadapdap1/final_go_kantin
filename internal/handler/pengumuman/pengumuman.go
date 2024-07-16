@@ -16,6 +16,7 @@ type PengumumanHandler interface {
 	CreatePengumuman(c *gin.Context)
 	GetAllPengumuman(c *gin.Context)
 	UpdatedPengumuman(c *gin.Context)
+	DeletePengumumanByID(c *gin.Context)
 }
 
 type pengumumanHandler struct {
@@ -108,4 +109,18 @@ func (h *pengumumanHandler) UpdatedPengumuman(c *gin.Context) {
 		"data":    updatedPengumuman,
 	}
 	c.JSON(http.StatusOK, successResp)
+}
+
+func (h *pengumumanHandler) DeletePengumumanByID(c *gin.Context) {
+	pengumumanID, _ := strconv.Atoi(c.Param("id"))
+	err := h.service.DeletePengumumanByID(uint(pengumumanID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete pengumuman"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "pengumuman successfully deleted",
+	})
 }

@@ -1,6 +1,7 @@
 package menumakanan
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -12,9 +13,10 @@ import (
 )
 
 type MenuMakananHandler interface {
-	CreateMenuMakanan(c *gin.Context) 
+	CreateMenuMakanan(c *gin.Context)
 	GetAllMenuMakanan(c *gin.Context)
-	DeleteMenuMakanan(c *gin.Context) 
+	DeleteMenuMakanan(c *gin.Context)
+	UpdateMenuMakanan(c *gin.Context)
 }
 
 type menuMakananHandler struct {
@@ -37,11 +39,11 @@ func (h *menuMakananHandler) DeleteMenuMakanan(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "menu makanan successfully deleted",
-	});
+	})
 
 }
 
-func (h *menuMakananHandler) CreateMenuMakanan(c *gin.Context)  {
+func (h *menuMakananHandler) CreateMenuMakanan(c *gin.Context) {
 	var menuMakanInput api.CreateMenuMakananInput
 	if err := c.ShouldBind(&menuMakanInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error brewuu": err.Error()})
@@ -54,14 +56,14 @@ func (h *menuMakananHandler) CreateMenuMakanan(c *gin.Context)  {
 		return
 	}
 
-	menuMakan := models.MenuMakanan {
+	menuMakan := models.MenuMakanan{
 		TanggalMakan: parsedTime,
-		MenuPagi: menuMakanInput.MenuPagi,
-		MenuSiang: menuMakanInput.MenuSiang,
-		MenuMalam: menuMakanInput.MenuMalam,
-		Foto1: menuMakanInput.Foto1,
-		Foto2: menuMakanInput.Foto2,
-		Foto3: menuMakanInput.Foto3,
+		MenuPagi:     menuMakanInput.MenuPagi,
+		MenuSiang:    menuMakanInput.MenuSiang,
+		MenuMalam:    menuMakanInput.MenuMalam,
+		Foto1:        menuMakanInput.Foto1,
+		Foto2:        menuMakanInput.Foto2,
+		Foto3:        menuMakanInput.Foto3,
 	}
 
 	if err := h.serv.CreateMenuMakanan(menuMakan); err != nil {
@@ -81,6 +83,35 @@ func (h *menuMakananHandler) GetAllMenuMakanan(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data": menus,
-	});
+		"data":    menus,
+	})
+}
+
+func (h *menuMakananHandler) UpdateMenuMakanan(c *gin.Context) {
+	menuMakananID, _ := strconv.Atoi(c.Param("id"))
+	log.Println("handler 111")
+	var inputMenuMakanan api.UpdateMenuMakananInput
+	if err := c.ShouldBindJSON(&inputMenuMakanan); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedMenuMakanan, err := h.serv.UpdateMenuMakanan(uint(menuMakananID), inputMenuMakanan)
+	if err != nil {
+		response := gin.H{
+			"success": false,
+			"message": "failed to update menu makanan",
+			"error":   err.Error(),
+		}
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+	log.Println("handler 2")
+	successResp := gin.H{
+		"success": true,
+		"message": "successfully updated menu makanan",
+		"data":    updatedMenuMakanan,
+	}
+
+	c.JSON(http.StatusOK, successResp)
 }
